@@ -18,6 +18,7 @@
   "homepage": "https://github.com/chinguyen98/instagram-images-downloader#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "image-downloader": "^3.5.0",
     "puppeteer": "^2.1.1"
   }
 }
