@@ -1,0 +1,23 @@
+{
+  "name": "instagram-images-downloader",
+  "version": "1.0.0",
+  "description": "Nothing",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chinguyen98/instagram-images-downloader.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chinguyen98/instagram-images-downloader/issues"
+  },
+  "homepage": "https://github.com/chinguyen98/instagram-images-downloader#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "puppeteer": "^2.1.1"
+  }
+}
