@@ -10,6 +10,25 @@ const usernameTextbox = 'input[name="username"]';
 const passwordTextbox = 'input[name="password"]';
 const btnLogin = 'button[type="submit"]';
 
+async function scrollToTheEndOfPage() {
+    let beforeScrollHeight = await new Promise((resolve, reject) => {
+        resolve(document.querySelector('body').scrollHeight);
+    })
+    let scroll = await new Promise((resolve, reject) => {
+        window.scrollBy(0, window.innerHeight * 3000);
+        resolve('Done!');
+    })
+    await new Promise((resolve, reject) => {
+        setTimeout(resolve, 2000);
+    })
+    let afterScrollHeight = await new Promise((resolve, reject) => {
+        resolve(document.querySelector('body').scrollHeight);
+    })
+    if (beforeScrollHeight != afterScrollHeight) {
+        scrollToTheEndOfPage();
+    }
+}
+
 (async () => {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
@@ -24,6 +43,10 @@ const btnLogin = 'button[type="submit"]';
     await page.type(passwordTextbox, password);
     await page.waitFor(btnLogin);
     await page.$eval(btnLogin, e => e.click());
+    await page.waitForNavigation({ waitUntil: 'load' });
+
+    console.log('Waiting for loading all images......!');
+    await page.evaluate(scrollToTheEndOfPage);
 
     //await browser.close();
 })();
