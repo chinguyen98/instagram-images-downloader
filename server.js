@@ -5,55 +5,36 @@ require('dotenv').config('./.env');
 const username = process.env.username;
 const password = process.env.password;
 const url = process.env.url;
-const runningTime = 30000;
 
 const btnAccessLoginPage = '.tdiEy button';
 const usernameTextbox = 'input[name="username"]';
 const passwordTextbox = 'input[name="password"]';
 const btnLogin = 'button[type="submit"]';
 
-async function scrollToTheEndOfPage() {
-    try {
-        let beforeScrollHeight = await new Promise((resolve, reject) => {
-            resolve(document.querySelector('body').scrollHeight);
-        })
-        await new Promise((resolve, reject) => {
-            window.scrollBy(0, window.innerHeight * 3000);
-            resolve('Done!');
-        })
-        await new Promise((resolve, reject) => {
-            setTimeout(resolve, 2000);
-        })
-        let afterScrollHeight = await new Promise((resolve, reject) => {
-            resolve(document.querySelector('body').scrollHeight);
-        })
-        await new Promise((resolve, reject) => {
-            if (beforeScrollHeight != afterScrollHeight) {
-                scrollToTheEndOfPage();
-                resolve('Done!');
-            }
-        })
-    } catch (error) {
-
-    }
+function getImageUrl() {
+    const imageLinks = Array.from(document.querySelectorAll('.KL4Bh img'));
+    let images = imageLinks.map(image => ({
+        'url': image.getAttribute('src')
+    }));
+    return images;
 }
 
-async function getImgJson() {
+async function getImageUrlList(page, getImageUrl, imageTargetCount, scrollDelay = 1000) {
+    let items = [];
     try {
-        const imageLinks = await new Promise((resolve, reject) => {
-            resolve(Array.from(document.querySelectorAll('.KL4Bh img')));
-        })
-        const images = await new Promise((resolve, reject) => {
-            resolve(
-                imageLinks.map(image => ({
-                    'url': image.getAttribute('src')
-                }))
-            )
-        });
-        return images;
+        let previousHeight;
+        while (items.length < imageTargetCount) {
+            const images = await page.evaluate(getImageUrl);
+            items.push(...images);
+            previousHeight = await page.evaluate('document.body.scrollHeight');
+            await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
+            await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
+            await page.waitFor(scrollDelay);
+        }
     } catch (error) {
 
     }
+    return items;
 }
 
 (async () => {
@@ -62,6 +43,7 @@ async function getImgJson() {
         const page = await browser.newPage();
         await page.goto(url);
 
+        console.log('\nAccess to Instagram......................');
         await page.waitFor(btnAccessLoginPage);
         await page.$eval(btnAccessLoginPage, e => e.click());
 
@@ -73,27 +55,21 @@ async function getImgJson() {
         await page.$eval(btnLogin, e => e.click());
         await page.waitForNavigation({ waitUntil: 'load' });
 
-        console.log('Waiting for loading all images......!');
-        await page.evaluate(scrollToTheEndOfPage);
+        console.log('\nCrawling......................');
+        const images = await getImageUrlList(page, getImageUrl, 500);
 
-        await new Promise((resolve, reject) => {
-            setTimeout(resolve, runningTime);
-        })
-
-        const images = await page.evaluate(getImgJson);
-        console.log(images);
-
+        console.log('\nDownloading......................');
         await Promise.all(images.map(image => {
             imageDownloader.image({
                 url: image.url,
                 dest: `./images`
             })
-        }))
+        }));
+
     } catch (error) {
-        console.log('Error! End!')
+        console.log('Error! End!');
         await browser.close();
     }
 
-    console.log('Complete!');
     await browser.close();
 })();
