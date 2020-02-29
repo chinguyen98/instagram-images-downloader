@@ -1,15 +1,7 @@
 const puppeteer = require('puppeteer');
 const imageDownloader = require('image-downloader');
-require('dotenv').config('./.env');
 
-const username = process.env.username;
-const password = process.env.password;
-const url = process.env.url;
-
-const btnAccessLoginPage = '.tdiEy button';
-const usernameTextbox = 'input[name="username"]';
-const passwordTextbox = 'input[name="password"]';
-const btnLogin = 'button[type="submit"]';
+const url = 'https://www.instagram.com/ban_2214/';
 
 function getImageUrl() {
     const imageLinks = Array.from(document.querySelectorAll('.KL4Bh img'));
@@ -41,19 +33,9 @@ async function getImageUrlList(page, getImageUrl, imageTargetCount, scrollDelay 
     const browser = await puppeteer.launch({ headless: true });
     try {
         const page = await browser.newPage();
-        await page.goto(url);
 
         console.log('\nAccess to Instagram......................');
-        await page.waitFor(btnAccessLoginPage);
-        await page.$eval(btnAccessLoginPage, e => e.click());
-
-        await page.waitFor(usernameTextbox);
-        await page.type(usernameTextbox, username);
-        await page.waitFor(passwordTextbox);
-        await page.type(passwordTextbox, password);
-        await page.waitFor(btnLogin);
-        await page.$eval(btnLogin, e => e.click());
-        await page.waitForNavigation({ waitUntil: 'load' });
+        await page.goto(url);
 
         console.log('\nCrawling......................');
         const images = await getImageUrlList(page, getImageUrl, 500);
