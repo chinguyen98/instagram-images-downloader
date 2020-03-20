@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const imageDownloader = require('image-downloader');
 
-const url = 'https://www.instagram.com/ban_2214/';
+const url = 'instagram url';
 
 function getImageUrl() {
     const imageLinks = Array.from(document.querySelectorAll('.KL4Bh img'));
