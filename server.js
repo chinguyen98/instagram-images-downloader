@@ -25,7 +25,7 @@ async function getImageUrlList(page, getImageUrl, imageTargetCount, scrollDelay 
             await page.waitFor(scrollDelay);
         }
     } catch (error) {
-
+        console.log(error)
     }
     return items;
 }
@@ -38,10 +38,10 @@ async function getImageUrlList(page, getImageUrl, imageTargetCount, scrollDelay 
         console.log('\nAccess to Instagram......................');
         await page.goto(url);
 
-        console.log('\nCrawling......................');
+        console.log('\nCrawling.................................');
         const images = await getImageUrlList(page, getImageUrl, 500);
 
-        console.log('\nDownloading......................');
+        console.log('\nDownloading..............................');
         await Promise.all(images.map(image => {
             imageDownloader.image({
                 url: image.url,
