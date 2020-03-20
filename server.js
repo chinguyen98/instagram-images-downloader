@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const imageDownloader = require('image-downloader');
 
 const url = 'instagram url';
+const destinationUrl = './images';
 
 function getImageUrl() {
     const imageLinks = Array.from(document.querySelectorAll('.KL4Bh img'));
@@ -44,7 +45,7 @@ async function getImageUrlList(page, getImageUrl, imageTargetCount, scrollDelay 
         await Promise.all(images.map(image => {
             imageDownloader.image({
                 url: image.url,
-                dest: `./images`
+                dest: destinationUrl
             })
         }));
 
